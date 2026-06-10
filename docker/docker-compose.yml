@@ -1,0 +1,93 @@
+version: "3.9"
+
+services:
+  kyma-dub-agent:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    image: kyma-dub-enhanced:latest
+    container_name: kyma-dub-agent
+    ports:
+      - "7821:7821"
+    environment:
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - CLAUDE_MODEL=${CLAUDE_MODEL:-claude-opus-4-8}
+      - OPENAI_MODEL=${OPENAI_MODEL:-gpt-4o}
+      - OLLAMA_MODEL=${OLLAMA_MODEL:-llama3}
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - PRIVACY_MODE=${PRIVACY_MODE:-false}
+      - HF_TOKEN=${HF_TOKEN}
+      - HF_HOME=/app/models
+      - OUTPUT_DIR=/app/output
+      - MODELS_DIR=/app/models
+      - DATA_DIR=/app/data
+      - PORT=7821
+    volumes:
+      - kyma_output:/app/output
+      - kyma_models:/app/models
+      - kyma_data:/app/data
+    command: python -m agent.main serve --host 0.0.0.0 --port 7821 --start-scheduler
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:7821/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    depends_on:
+      - ollama
+    restart: unless-stopped
+
+  kyma-dub-agent-gpu:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    image: kyma-dub-enhanced:latest
+    container_name: kyma-dub-agent-gpu
+    profiles: ["gpu"]
+    ports:
+      - "7821:7821"
+    environment:
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - CLAUDE_MODEL=${CLAUDE_MODEL:-claude-opus-4-8}
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - HF_HOME=/app/models
+      - OUTPUT_DIR=/app/output
+      - MODELS_DIR=/app/models
+      - DATA_DIR=/app/data
+    volumes:
+      - kyma_output:/app/output
+      - kyma_models:/app/models
+      - kyma_data:/app/data
+    command: python -m agent.main serve --host 0.0.0.0 --port 7821 --start-scheduler
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    depends_on:
+      - ollama
+    restart: unless-stopped
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: kyma-dub-ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - kyma_ollama_models:/root/.ollama
+    profiles: ["default", "gpu"]
+    restart: unless-stopped
+
+volumes:
+  kyma_output:
+    driver: local
+  kyma_models:
+    driver: local
+  kyma_data:
+    driver: local
+  kyma_ollama_models:
+    driver: local

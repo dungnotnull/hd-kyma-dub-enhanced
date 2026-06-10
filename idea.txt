@@ -1,0 +1,1 @@
+Fork repo github.com/sonpiaz/kyma-dub opensource repo, upgrade và custom, thêm agent chuyên research paper hay document liên quan để đưa ra cải tiến đề xuất cho bài toán tối ưu

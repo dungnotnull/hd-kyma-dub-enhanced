@@ -1,0 +1,54 @@
+# Core
+click>=8.1.7
+pyyaml>=6.0
+fastapi>=0.111.0
+uvicorn[standard]>=0.29.0
+pydantic>=2.7.0
+aiohttp>=3.9.5
+python-dotenv>=1.0.1
+apscheduler>=3.10.4
+
+# ASR
+openai-whisper>=20231117
+faster-whisper>=1.0.0
+
+# Translation
+transformers>=4.41.0
+torch>=2.3.0
+sentencepiece>=0.2.0
+deep-translator>=1.11.4
+
+# TTS
+TTS>=0.22.0                  # coqui XTTS-v2
+bark>=0.1.5                  # suno/bark fallback
+pyttsx3>=2.90                # offline CPU fallback
+soundfile>=0.12.1
+scipy>=1.13.0
+librosa>=0.10.2
+numpy>=1.26.4
+
+# Lip-sync (Wav2Lip requires manual clone + checkpoint download)
+opencv-python-headless>=4.9.0
+# Wav2Lip: git clone https://github.com/Rudrabha/Wav2Lip
+
+# MOS evaluation
+# microsoft/UTMOS22 via transformers (see model loading)
+
+# Sentence similarity
+sentence-transformers>=3.0.1
+
+# Memory
+# sqlite3 is part of Python stdlib
+
+# Knowledge crawler
+# aiohttp already included above
+
+# Testing
+pytest>=8.2.0
+pytest-asyncio>=0.23.7
+
+# Monitoring
+prometheus-client>=0.20.0
+
+# Video processing (ffmpeg via subprocess — install ffmpeg system package)
+# ffmpeg binary required: apt-get install ffmpeg / brew install ffmpeg

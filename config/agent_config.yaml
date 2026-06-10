@@ -1,0 +1,94 @@
+agent:
+  name: kyma-dub-enhanced
+  version: "1.0.0"
+  output_dir: ./output
+  models_dir: ./models
+
+asr:
+  model_size: large-v3            # whisper model size: tiny/base/small/medium/large-v3
+  beam_size: 5
+  word_timestamps: true
+  language: null                  # null = auto-detect
+
+translation:
+  default_voice_style: casual     # formal / casual / dramatic / documentary
+  back_translation_threshold: 0.75
+  timing_tolerance_pct: 0.15      # ±15% duration fit
+
+tts:
+  primary_model: xtts-v2
+  fallback_model: bark
+  reference_audio_duration_s: 10  # seconds to extract from source video
+  speed_factor_min: 0.85
+  speed_factor_max: 1.15
+  sample_rate: 22050
+
+lipsync:
+  checkpoint_path: Wav2Lip/checkpoints/wav2lip_gan.pth
+  sync_confidence_threshold: 0.85
+  resize_factor: 1
+  face_crop: false
+
+quality:
+  mos_threshold: 3.5
+  naturalness_threshold: 4.0
+  accuracy_threshold: 4.0
+  max_retries: 3
+
+llm:
+  provider_priority:
+    - claude
+    - openai
+    - ollama
+  claude_model: claude-opus-4-8
+  openai_model: gpt-4o
+  ollama_model: llama3
+  ollama_base_url: http://localhost:11434
+  max_tokens_translate: 300
+  max_tokens_review: 200
+  temperature: 0.3
+
+hf_models:
+  cache_dir: ./models
+  idle_unload_seconds: 600
+  device: auto                    # auto / cuda / cpu
+
+knowledge_updater:
+  schedule: "06:00"               # daily cron
+  arxiv_categories:
+    - cs.SD
+    - cs.CV
+    - cs.CL
+  max_results_per_category: 20
+  top_n_entries: 15
+  min_combined_score: 0.15
+
+server:
+  host: 0.0.0.0
+  port: 7821
+  workers: 1
+
+memory:
+  db_path: ./data/kyma_dub.db
+
+supported_languages:
+  - en
+  - es
+  - fr
+  - de
+  - it
+  - pt
+  - ru
+  - zh
+  - ja
+  - ko
+  - ar
+  - hi
+  - tr
+  - pl
+  - nl
+  - sv
+  - vi
+  - id
+  - th
+  - fa
